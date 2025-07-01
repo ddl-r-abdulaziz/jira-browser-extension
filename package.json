@@ -47,12 +47,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/jira-browser-extension.git"
+    "url": "https://github.com/ddl-r-abdulaziz/jira-browser-extension.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/jira-browser-extension/issues"
+    "url": "https://github.com/ddl-r-abdulaziz/jira-browser-extension/issues"
   },
-  "homepage": "https://github.com/your-username/jira-browser-extension#readme",
+  "homepage": "https://github.com/ddl-r-abdulaziz/jira-browser-extension#readme",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"

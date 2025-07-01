@@ -8,14 +8,14 @@ This extension works on both Chrome/Chromium browsers and Firefox-based browsers
 ```bash
 npm run build:chrome
 # or
-npm run package:chrome  # Creates jira-ux-enhancer-chrome.zip
+npm run package:chrome  # Creates jira-browser-extension-chrome.zip
 ```
 
 ### For Firefox/Floorp:
 ```bash
 npm run build:firefox
 # or  
-npm run package:firefox  # Creates jira-ux-enhancer-firefox.zip
+npm run package:firefox  # Creates jira-browser-extension-firefox.zip
 ```
 
 ### For Both:
@@ -52,11 +52,11 @@ Floorp uses the same installation process as Firefox:
 ## Permanent Installation
 
 ### Chrome Web Store:
-- Use the Chrome build (`jira-ux-enhancer-chrome.zip`)
+- Use the Chrome build (`jira-browser-extension-chrome.zip`)
 - Upload to Chrome Web Store Developer Dashboard
 
 ### Firefox Add-ons (AMO):
-- Use the Firefox build (`jira-ux-enhancer-firefox.zip`)
+- Use the Firefox build (`jira-browser-extension-firefox.zip`)
 - Submit to addons.mozilla.org
 
 ### Floorp:
