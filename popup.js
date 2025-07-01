@@ -11,11 +11,8 @@ class PopupController {
   }
 
   setupEventListeners() {
-    // Toggle switches
-    document.getElementById('darkMode').addEventListener('change', this.handleToggleChange.bind(this));
-    document.getElementById('compactView').addEventListener('change', this.handleToggleChange.bind(this));
-    document.getElementById('enhancedNavigation').addEventListener('change', this.handleToggleChange.bind(this));
-    document.getElementById('improvedReadability').addEventListener('change', this.handleToggleChange.bind(this));
+    // Toggle switch
+    document.getElementById('editButtons').addEventListener('change', this.handleToggleChange.bind(this));
 
     // Action buttons
     document.getElementById('refreshEnhancements').addEventListener('click', this.refreshEnhancements.bind(this));
@@ -29,10 +26,7 @@ class PopupController {
   loadSettings() {
     chrome.storage.sync.get(['jiraEnhancements'], (result) => {
       const settings = result.jiraEnhancements || {
-        darkMode: false,
-        compactView: false,
-        enhancedNavigation: true,
-        improvedReadability: true
+        editButtons: true
       };
 
       this.updateToggleStates(settings);
@@ -40,10 +34,7 @@ class PopupController {
   }
 
   updateToggleStates(settings) {
-    document.getElementById('darkMode').checked = settings.darkMode;
-    document.getElementById('compactView').checked = settings.compactView;
-    document.getElementById('enhancedNavigation').checked = settings.enhancedNavigation;
-    document.getElementById('improvedReadability').checked = settings.improvedReadability;
+    document.getElementById('editButtons').checked = settings.editButtons;
   }
 
   handleToggleChange(event) {
@@ -86,10 +77,7 @@ class PopupController {
 
   resetSettings() {
     const defaultSettings = {
-      darkMode: false,
-      compactView: false,
-      enhancedNavigation: true,
-      improvedReadability: true
+      editButtons: true
     };
 
     chrome.storage.sync.set({ jiraEnhancements: defaultSettings }, () => {

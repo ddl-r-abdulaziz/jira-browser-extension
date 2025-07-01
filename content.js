@@ -48,6 +48,18 @@ class JiraEnhancer {
     window.addEventListener('popstate', () => {
       setTimeout(() => this.applyEnhancements(), 500);
     });
+
+    // Listen for messages from popup
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === 'updateSetting') {
+        this.handleSettingUpdate(message.setting, message.value);
+      } else if (message.action === 'resetSettings') {
+        this.handleSettingsReset(message.settings);
+      } else if (message.action === 'refreshEnhancements') {
+        this.refreshEnhancements();
+        sendResponse({ status: 'refreshed' });
+      }
+    });
   }
 
   handleDynamicContent(addedNodes) {
@@ -59,11 +71,8 @@ class JiraEnhancer {
   }
 
   applyEnhancements() {
-    this.enhanceIssueViews();
-    this.enhanceBoards();
-    this.enhanceNavigation();
-    this.improveReadability();
-    this.enhanceEditableFields();
+    // Only apply basic enhancements initially
+    // Edit buttons will be applied when user preferences are loaded
   }
 
   enhanceIssueViews() {
@@ -126,11 +135,12 @@ class JiraEnhancer {
   }
 
   applyUserPreferences(preferences) {
-    if (preferences.darkMode) {
-      document.body.classList.add('jira-dark-mode');
-    }
-    if (preferences.compactView) {
-      document.body.classList.add('jira-compact-view');
+    // Store preferences for later use
+    this.preferences = preferences;
+    
+    // Apply the edit buttons feature if enabled
+    if (preferences.editButtons !== false) {
+      this.enhanceEditableFields();
     }
   }
 
@@ -285,6 +295,63 @@ class JiraEnhancer {
   captureOriginalHandlers(parentDiv, editableFieldElement) {
     // Simplified - we no longer need complex handler capture since we use event simulation
     return {};
+  }
+
+  handleSettingUpdate(setting, value) {
+    if (setting === 'editButtons') {
+      if (value) {
+        // Enable edit buttons
+        this.enhanceEditableFields();
+      } else {
+        // Disable edit buttons
+        this.removeAllEditButtons();
+      }
+    }
+  }
+
+  handleSettingsReset(settings) {
+    // Remove all current enhancements
+    this.removeAllEditButtons();
+    
+    // Apply new settings
+    this.applyUserPreferences(settings);
+  }
+
+  refreshEnhancements() {
+    // Remove and re-add all enhancements
+    this.removeAllEditButtons();
+    if (this.preferences?.editButtons !== false) {
+      this.enhanceEditableFields();
+    }
+  }
+
+  removeAllEditButtons() {
+    // Remove all edit buttons and enhanced styling
+    const enhancedFields = document.querySelectorAll('[data-jira-enhanced-editable]');
+    enhancedFields.forEach(field => {
+      // Remove edit button
+      const editButton = field.querySelector('.jira-ux-edit-button');
+      if (editButton) {
+        editButton.remove();
+      }
+      
+      // Remove enhanced styling
+      field.style.position = '';
+      field.style.border = '';
+      field.style.borderRadius = '';
+      field.style.backgroundColor = '';
+      
+      // Remove enhancement marker
+      field.removeAttribute('data-jira-enhanced-editable');
+      
+      // Remove event blockers
+      if (field._jiraUxEventBlockers) {
+        Object.keys(field._jiraUxEventBlockers).forEach(eventType => {
+          field.removeEventListener(eventType, field._jiraUxEventBlockers[eventType], { capture: true });
+        });
+        delete field._jiraUxEventBlockers;
+      }
+    });
   }
 
   addEditButton(editableFieldElement, originalHandlers) {

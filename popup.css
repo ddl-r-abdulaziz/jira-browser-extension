@@ -115,6 +115,13 @@ section h2 {
   font-weight: 500;
 }
 
+.feature-description {
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
 /* Action Buttons */
 .action-buttons {
   display: flex;
