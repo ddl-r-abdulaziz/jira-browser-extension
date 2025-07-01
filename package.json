@@ -1,7 +1,7 @@
 {
-  "name": "jira-ux-enhancer",
+  "name": "jira-browser-extension",
   "version": "1.0.0",
-  "description": "Chrome extension that improves JIRA website user experience",
+  "description": "Cross-browser extension that improves JIRA website user experience",
   "main": "background.js",
   "scripts": {
     "build": "npm run clean && npm run copy-files",
@@ -16,14 +16,16 @@
     "lint": "eslint *.js",
     "lint:fix": "eslint *.js --fix",
     "package": "npm run package:chrome && npm run package:firefox",
-    "package:chrome": "npm run build:chrome && cd dist && zip -r ../jira-ux-enhancer-chrome.zip .",
-    "package:firefox": "npm run build:firefox && cd dist && zip -r ../jira-ux-enhancer-firefox.zip .",
+    "package:chrome": "npm run build:chrome && cd dist && zip -r ../jira-browser-extension-chrome.zip .",
+    "package:firefox": "npm run build:firefox && cd dist && zip -r ../jira-browser-extension-firefox.zip .",
     "test": "echo \"No tests specified yet\"",
     "validate": "web-ext lint --source-dir=.",
     "validate:firefox": "web-ext lint --source-dir=dist"
   },
   "keywords": [
-    "chrome-extension",
+    "browser-extension",
+    "chrome-extension", 
+    "firefox-extension",
     "jira",
     "ux",
     "productivity",
@@ -45,12 +47,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/chrome-jira-plugin.git"
+    "url": "https://github.com/your-username/jira-browser-extension.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/chrome-jira-plugin/issues"
+    "url": "https://github.com/your-username/jira-browser-extension/issues"
   },
-  "homepage": "https://github.com/your-username/chrome-jira-plugin#readme",
+  "homepage": "https://github.com/your-username/jira-browser-extension#readme",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
