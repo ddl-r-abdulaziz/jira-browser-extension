@@ -1,6 +1,0 @@
-<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="8" cy="8" r="6" fill="#0052cc"/>
-    <text x="8" y="9.6" font-family="Arial, sans-serif" font-size="9.6" font-weight="bold" text-anchor="middle" fill="white">J</text>
-    <line x1="10.4" y1="5.6" x2="12" y2="4" stroke="#ff8b00" stroke-width="1" stroke-linecap="round"/>
-    <circle cx="12" cy="4" r="1" fill="#ff8b00"/>
-  </svg>
