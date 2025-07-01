@@ -5,15 +5,22 @@
   "main": "background.js",
   "scripts": {
     "build": "npm run clean && npm run copy-files",
+    "build:chrome": "npm run clean && npm run copy-files:chrome",
+    "build:firefox": "npm run clean && npm run copy-files:firefox",
     "dev": "npm run build && npm run watch",
     "watch": "chokidar \"src/**/*\" -c \"npm run build\"",
     "clean": "rimraf dist",
-    "copy-files": "mkdir -p dist && cp -r *.js *.html *.css *.json icons dist/ 2>/dev/null || true",
+    "copy-files": "mkdir -p dist && cp -r *.js *.html *.css manifest.json icons dist/ 2>/dev/null || true",
+    "copy-files:chrome": "mkdir -p dist && cp -r *.js *.html *.css manifest.json icons dist/ 2>/dev/null || true",
+    "copy-files:firefox": "mkdir -p dist && cp -r *.js *.html *.css icons dist/ 2>/dev/null || true && cp manifest-firefox.json dist/manifest.json",
     "lint": "eslint *.js",
     "lint:fix": "eslint *.js --fix",
-    "package": "npm run build && cd dist && zip -r ../jira-ux-enhancer.zip .",
+    "package": "npm run package:chrome && npm run package:firefox",
+    "package:chrome": "npm run build:chrome && cd dist && zip -r ../jira-ux-enhancer-chrome.zip .",
+    "package:firefox": "npm run build:firefox && cd dist && zip -r ../jira-ux-enhancer-firefox.zip .",
     "test": "echo \"No tests specified yet\"",
-    "validate": "web-ext lint --source-dir=."
+    "validate": "web-ext lint --source-dir=.",
+    "validate:firefox": "web-ext lint --source-dir=dist"
   },
   "keywords": [
     "chrome-extension",

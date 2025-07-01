@@ -1,3 +1,6 @@
+// Cross-browser compatibility
+const browserAPI = (typeof browser !== 'undefined') ? browser : chrome;
+
 // Background script for JIRA UX Enhancer
 class BackgroundService {
   constructor() {
@@ -11,23 +14,23 @@ class BackgroundService {
 
   setupEventListeners() {
     // Handle extension installation
-    chrome.runtime.onInstalled.addListener((details) => {
+    browserAPI.runtime.onInstalled.addListener((details) => {
       this.handleInstallation(details);
     });
 
     // Handle messages from content scripts and popup
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
       this.handleMessage(message, sender, sendResponse);
       return true; // Keep message channel open for async responses
     });
 
     // Handle tab updates to detect JIRA pages
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    browserAPI.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       this.handleTabUpdate(tabId, changeInfo, tab);
     });
 
     // Handle tab activation
-    chrome.tabs.onActivated.addListener((activeInfo) => {
+    browserAPI.tabs.onActivated.addListener((activeInfo) => {
       this.handleTabActivation(activeInfo);
     });
   }
@@ -52,14 +55,14 @@ class BackgroundService {
       enableNotifications: true
     };
 
-    chrome.storage.sync.set({ jiraEnhancements: defaultSettings }, () => {
+    browserAPI.storage.sync.set({ jiraEnhancements: defaultSettings }, () => {
       console.log('Default settings initialized');
     });
   }
 
   showWelcomeNotification() {
-    if (chrome.notifications) {
-      chrome.notifications.create('welcome', {
+    if (browserAPI.notifications) {
+      browserAPI.notifications.create('welcome', {
         type: 'basic',
         iconUrl: 'icons/icon48.png',
         title: 'JIRA UX Enhancer Installed',

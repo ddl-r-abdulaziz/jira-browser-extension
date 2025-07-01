@@ -1,3 +1,6 @@
+// Cross-browser compatibility
+const browserAPI = (typeof browser !== 'undefined') ? browser : chrome;
+
 // JIRA UX Enhancement Content Script
 class JiraEnhancer {
   constructor() {
@@ -50,7 +53,7 @@ class JiraEnhancer {
     });
 
     // Listen for messages from popup
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.action === 'updateSetting') {
         this.handleSettingUpdate(message.setting, message.value);
       } else if (message.action === 'resetSettings') {
@@ -127,7 +130,7 @@ class JiraEnhancer {
   }
 
   loadUserPreferences() {
-    chrome.storage.sync.get(['jiraEnhancements'], (result) => {
+    browserAPI.storage.sync.get(['jiraEnhancements'], (result) => {
       if (result.jiraEnhancements) {
         this.applyUserPreferences(result.jiraEnhancements);
       }
