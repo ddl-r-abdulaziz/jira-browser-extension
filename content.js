@@ -13,11 +13,9 @@ class JiraEnhancer {
   detectJiraPage() {
     const isJiraPage = this.isJiraWebsite();
     if (!isJiraPage) {
-      console.log('JIRA UX Enhancer: Not a JIRA page, skipping enhancements');
       return;
     }
 
-    console.log('JIRA UX Enhancer: JIRA page detected, applying enhancements');
     this.applyEnhancements();
   }
 
@@ -139,6 +137,16 @@ class JiraEnhancer {
   enhanceEditableFields() {
     // Find and process all editable fields on the page
     this.processEditableFields(document);
+    
+    // Also set up a delayed enhancement in case JIRA loads handlers later
+    setTimeout(() => {
+      this.processEditableFields(document);
+    }, 2000);
+    
+    // Set up periodic checks for new handlers (JIRA loads content dynamically)
+    setInterval(() => {
+      this.processEditableFields(document);
+    }, 5000);
   }
 
   processEditableFields(rootElement) {
@@ -166,7 +174,6 @@ class JiraEnhancer {
       return;
     }
 
-    console.log('JIRA UX Enhancer: Enhancing editable field', parentDiv);
 
     // Mark as enhanced
     parentDiv.setAttribute('data-jira-enhanced-editable', 'true');
@@ -185,30 +192,66 @@ class JiraEnhancer {
   }
 
   blockEditableFieldClick(parentDiv) {
+    // Store references to our event blockers so we can remove them temporarily
+    const eventBlockers = {};
+    
     // Add click event listener with capture to intercept before JIRA's handlers
-    parentDiv.addEventListener('click', (event) => {
-      console.log('JIRA UX Enhancer: Blocking default edit behavior');
+    const clickBlocker = (event) => {
+      // Check if we're bypassing blocking
+      if (parentDiv.hasAttribute('data-jira-bypass-blocking')) {
+        return; // Let the event through
+      }
+      
+      // Check if we're intentionally triggering the original behavior
+      if (parentDiv.hasAttribute('data-jira-triggering-original')) {
+        return; // Let the event through
+      }
+      
+      // Skip if click originated from our edit button
+      if (event.target.closest('.jira-ux-edit-button')) {
+        return;
+      }
       
       // Prevent the default inline editing behavior
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
-      
-      // Custom behavior can be added here later
-      console.log('JIRA UX Enhancer: Custom edit behavior would trigger here');
-      
-    }, { capture: true, passive: false });
+    };
+    
+    eventBlockers.click = clickBlocker;
+    parentDiv.addEventListener('click', clickBlocker, { capture: true, passive: false });
 
     // Also block other mouse events that might trigger editing
     ['mousedown', 'mouseup', 'dblclick'].forEach(eventType => {
-      parentDiv.addEventListener(eventType, (event) => {
+      const eventBlocker = (event) => {
+        // Check if we're bypassing blocking
+        if (parentDiv.hasAttribute('data-jira-bypass-blocking')) {
+          return; // Let the event through
+        }
+        
+        // Check if we're intentionally triggering the original behavior
+        if (parentDiv.hasAttribute('data-jira-triggering-original')) {
+          return; // Let the event through
+        }
+        
+        // Skip if event originated from our edit button
+        if (event.target.closest('.jira-ux-edit-button')) {
+          return;
+        }
+        
         if (event.target.closest('[data-component-selector="jira-issue-view-rich-text-inline-edit-view-container"]')) {
           event.preventDefault();
           event.stopPropagation();
           event.stopImmediatePropagation();
         }
-      }, { capture: true, passive: false });
+      };
+      
+      eventBlockers[eventType] = eventBlocker;
+      parentDiv.addEventListener(eventType, eventBlocker, { capture: true, passive: false });
     });
+
+    // Store the blockers on the element for later access
+    parentDiv._jiraUxEventBlockers = eventBlockers;
   }
 
   addEditableFieldIndicators(parentDiv) {
@@ -240,41 +283,8 @@ class JiraEnhancer {
   }
 
   captureOriginalHandlers(parentDiv, editableFieldElement) {
-    // Create a synthetic event to trigger original behavior
-    const originalHandlers = {
-      triggerOriginalClick: () => {
-        console.log('JIRA UX Enhancer: Triggering original edit behavior');
-        
-        // Remove our blocking listeners temporarily
-        const tempDiv = parentDiv.cloneNode(true);
-        parentDiv.parentNode.insertBefore(tempDiv, parentDiv);
-        parentDiv.style.display = 'none';
-        
-        // Simulate click on the original element structure
-        const clickEvent = new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        });
-        
-        // Find the editable element in the temp div and click it
-        const tempEditableElement = tempDiv.querySelector('[data-component-selector="jira-issue-view-rich-text-inline-edit-view-container"]');
-        if (tempEditableElement) {
-          setTimeout(() => {
-            tempEditableElement.dispatchEvent(clickEvent);
-            // Clean up after a short delay
-            setTimeout(() => {
-              if (tempDiv.parentNode) {
-                tempDiv.parentNode.removeChild(tempDiv);
-                parentDiv.style.display = '';
-              }
-            }, 100);
-          }, 50);
-        }
-      }
-    };
-
-    return originalHandlers;
+    // Simplified - we no longer need complex handler capture since we use event simulation
+    return {};
   }
 
   addEditButton(editableFieldElement, originalHandlers) {
@@ -322,8 +332,57 @@ class JiraEnhancer {
       event.stopPropagation();
       event.stopImmediatePropagation();
       
-      console.log('JIRA UX Enhancer: Edit button clicked');
-      originalHandlers.triggerOriginalClick();
+      // Get fresh reference to parent element at click time
+      const currentParentDiv = editableFieldElement.closest('[role="presentation"]');
+      
+      // Temporarily disable our blocking by marking the parent
+      currentParentDiv.setAttribute('data-jira-bypass-blocking', 'true');
+      
+      // Hide the edit button temporarily so it doesn't interfere
+      editButton.style.display = 'none';
+      
+      // Wait a moment, then simulate the complete mouse interaction sequence
+      setTimeout(() => {
+        const rect = currentParentDiv.getBoundingClientRect();
+        const clientX = rect.left + 50;
+        const clientY = rect.top + 20;
+        
+        const eventProps = {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+          detail: 1,
+          clientX: clientX,
+          clientY: clientY,
+          button: 0,
+          buttons: 1
+        };
+        
+        // Simulate the full mouse interaction sequence that JIRA expects
+        const mouseDownEvent = new MouseEvent('mousedown', eventProps);
+        const mouseUpEvent = new MouseEvent('mouseup', eventProps);
+        const clickEvent = new MouseEvent('click', { ...eventProps, detail: 1 });
+        
+        currentParentDiv.dispatchEvent(mouseDownEvent);
+        
+        setTimeout(() => {
+          currentParentDiv.dispatchEvent(mouseUpEvent);
+          
+          setTimeout(() => {
+            currentParentDiv.dispatchEvent(clickEvent);
+          }, 10);
+        }, 10);
+        
+        // Clean up after a delay to let JIRA process the click
+        setTimeout(() => {
+          currentParentDiv.removeAttribute('data-jira-bypass-blocking');
+          // Don't show the edit button again if JIRA entered edit mode
+          if (!currentParentDiv.querySelector('input, textarea, [contenteditable]')) {
+            editButton.style.display = '';
+          }
+        }, 1000);
+        
+      }, 50);
     }, { capture: true });
 
     // Find the container to add the button to
@@ -331,7 +390,6 @@ class JiraEnhancer {
     if (container) {
       container.style.position = 'relative';
       container.appendChild(editButton);
-      console.log('JIRA UX Enhancer: Edit button added');
     }
   }
 }
