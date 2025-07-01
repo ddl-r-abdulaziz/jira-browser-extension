@@ -58,6 +58,12 @@ class PopupController {
           action: 'updateSetting',
           setting: setting,
           value: value
+        }, (response) => {
+          // Handle the case where content script doesn't exist or isn't ready
+          if (chrome.runtime.lastError) {
+            // Silently ignore - content script may not be injected on this page
+            return;
+          }
         });
       }
     });
@@ -69,6 +75,10 @@ class PopupController {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: 'refreshEnhancements'
         }, (response) => {
+          if (chrome.runtime.lastError) {
+            this.showTemporaryStatus('No JIRA page detected', 'error');
+            return;
+          }
           this.showTemporaryStatus('Enhancements refreshed!', 'success');
         });
       }
@@ -89,6 +99,11 @@ class PopupController {
           chrome.tabs.sendMessage(tabs[0].id, {
             action: 'resetSettings',
             settings: defaultSettings
+          }, (response) => {
+            if (chrome.runtime.lastError) {
+              // Silently ignore - content script may not be injected
+              return;
+            }
           });
         }
       });
@@ -107,6 +122,11 @@ class PopupController {
           chrome.tabs.sendMessage(tabs[0].id, {
             action: 'getStatus'
           }, (response) => {
+            if (chrome.runtime.lastError) {
+              // Content script not ready yet, but page is JIRA
+              this.updateStatus(true, 'JIRA page detected');
+              return;
+            }
             if (response && response.status) {
               this.updateStatus(true, response.status);
             }
