@@ -1,0 +1,179 @@
+// Popup functionality for JIRA UX Enhancer
+class PopupController {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.loadSettings();
+    this.setupEventListeners();
+    this.checkJiraPageStatus();
+  }
+
+  setupEventListeners() {
+    // Toggle switches
+    document.getElementById('darkMode').addEventListener('change', this.handleToggleChange.bind(this));
+    document.getElementById('compactView').addEventListener('change', this.handleToggleChange.bind(this));
+    document.getElementById('enhancedNavigation').addEventListener('change', this.handleToggleChange.bind(this));
+    document.getElementById('improvedReadability').addEventListener('change', this.handleToggleChange.bind(this));
+
+    // Action buttons
+    document.getElementById('refreshEnhancements').addEventListener('click', this.refreshEnhancements.bind(this));
+    document.getElementById('resetSettings').addEventListener('click', this.resetSettings.bind(this));
+
+    // Footer links
+    document.getElementById('optionsLink').addEventListener('click', this.openOptions.bind(this));
+    document.getElementById('helpLink').addEventListener('click', this.openHelp.bind(this));
+  }
+
+  loadSettings() {
+    chrome.storage.sync.get(['jiraEnhancements'], (result) => {
+      const settings = result.jiraEnhancements || {
+        darkMode: false,
+        compactView: false,
+        enhancedNavigation: true,
+        improvedReadability: true
+      };
+
+      this.updateToggleStates(settings);
+    });
+  }
+
+  updateToggleStates(settings) {
+    document.getElementById('darkMode').checked = settings.darkMode;
+    document.getElementById('compactView').checked = settings.compactView;
+    document.getElementById('enhancedNavigation').checked = settings.enhancedNavigation;
+    document.getElementById('improvedReadability').checked = settings.improvedReadability;
+  }
+
+  handleToggleChange(event) {
+    const settingName = event.target.id;
+    const isEnabled = event.target.checked;
+
+    chrome.storage.sync.get(['jiraEnhancements'], (result) => {
+      const settings = result.jiraEnhancements || {};
+      settings[settingName] = isEnabled;
+
+      chrome.storage.sync.set({ jiraEnhancements: settings }, () => {
+        this.notifyContentScript(settingName, isEnabled);
+      });
+    });
+  }
+
+  notifyContentScript(setting, value) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'updateSetting',
+          setting: setting,
+          value: value
+        });
+      }
+    });
+  }
+
+  refreshEnhancements() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'refreshEnhancements'
+        }, (response) => {
+          this.showTemporaryStatus('Enhancements refreshed!', 'success');
+        });
+      }
+    });
+  }
+
+  resetSettings() {
+    const defaultSettings = {
+      darkMode: false,
+      compactView: false,
+      enhancedNavigation: true,
+      improvedReadability: true
+    };
+
+    chrome.storage.sync.set({ jiraEnhancements: defaultSettings }, () => {
+      this.updateToggleStates(defaultSettings);
+      this.showTemporaryStatus('Settings reset to defaults', 'success');
+      
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: 'resetSettings',
+            settings: defaultSettings
+          });
+        }
+      });
+    });
+  }
+
+  checkJiraPageStatus() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        const url = tabs[0].url;
+        const isJiraPage = this.isJiraUrl(url);
+        
+        this.updateStatus(isJiraPage);
+        
+        if (isJiraPage) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: 'getStatus'
+          }, (response) => {
+            if (response && response.status) {
+              this.updateStatus(true, response.status);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  isJiraUrl(url) {
+    return url.includes('atlassian.net') || 
+           url.includes('/jira/') || 
+           url.includes('jira.');
+  }
+
+  updateStatus(isJiraPage, status = null) {
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+
+    if (isJiraPage) {
+      statusDot.className = 'status-dot active';
+      statusText.textContent = status || 'JIRA page detected - Enhancements active';
+    } else {
+      statusDot.className = 'status-dot inactive';
+      statusText.textContent = 'Not a JIRA page';
+    }
+  }
+
+  showTemporaryStatus(message, type = 'info') {
+    const statusText = document.getElementById('statusText');
+    const originalText = statusText.textContent;
+    
+    statusText.textContent = message;
+    statusText.className = `status-text ${type}`;
+    
+    setTimeout(() => {
+      statusText.textContent = originalText;
+      statusText.className = 'status-text';
+    }, 2000);
+  }
+
+  openOptions(event) {
+    event.preventDefault();
+    chrome.runtime.openOptionsPage();
+  }
+
+  openHelp(event) {
+    event.preventDefault();
+    chrome.tabs.create({
+      url: 'https://github.com/your-username/chrome-jira-plugin#readme'
+    });
+  }
+}
+
+// Initialize popup when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  new PopupController();
+});

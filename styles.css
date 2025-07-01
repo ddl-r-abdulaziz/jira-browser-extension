@@ -1,0 +1,229 @@
+/* JIRA UX Enhancement Styles */
+
+/* Base enhancements for all JIRA pages */
+.jira-ux-enhanced {
+  --jira-enhanced-primary: #0052cc;
+  --jira-enhanced-secondary: #36b37e;
+  --jira-enhanced-warning: #ff8b00;
+  --jira-enhanced-error: #ff5630;
+  --jira-enhanced-text: #172b4d;
+  --jira-enhanced-text-subtle: #6b778c;
+  --jira-enhanced-background: #ffffff;
+  --jira-enhanced-background-subtle: #f4f5f7;
+  --jira-enhanced-border: #dfe1e6;
+  --jira-enhanced-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode variables */
+.jira-ux-enhanced.jira-dark-mode {
+  --jira-enhanced-text: #ffffff;
+  --jira-enhanced-text-subtle: #b3b9c4;
+  --jira-enhanced-background: #1d2125;
+  --jira-enhanced-background-subtle: #282c34;
+  --jira-enhanced-border: #3c4149;
+  --jira-enhanced-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced Navigation */
+.jira-enhanced-nav {
+  transition: all 0.3s ease;
+  border-right: 1px solid var(--jira-enhanced-border);
+}
+
+.jira-enhanced-nav:hover {
+  box-shadow: var(--jira-enhanced-shadow);
+}
+
+/* Issue View Enhancements */
+.issue-enhanced {
+  position: relative;
+}
+
+.issue-enhanced::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, var(--jira-enhanced-primary), var(--jira-enhanced-secondary));
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+/* Improved readability for issue titles */
+.issue-enhanced h1,
+.issue-enhanced [data-testid*="issue.views.issue-base.foundation.summary.heading"] {
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  color: var(--jira-enhanced-text) !important;
+}
+
+/* Board Enhancements */
+.board-enhanced {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--jira-enhanced-shadow);
+}
+
+/* Enhanced card styling */
+.board-enhanced [data-testid*="software-board.board-container.board.card"] {
+  border-radius: 6px !important;
+  border: 1px solid var(--jira-enhanced-border) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
+}
+
+.board-enhanced [data-testid*="software-board.board-container.board.card"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Compact view modifications */
+.jira-compact-view {
+  font-size: 13px;
+}
+
+.jira-compact-view .issue-enhanced {
+  padding: 8px !important;
+}
+
+.jira-compact-view [data-testid*="software-board.board-container.board.card"] {
+  margin: 4px !important;
+  padding: 8px !important;
+}
+
+/* Dark mode styles */
+.jira-dark-mode {
+  background-color: var(--jira-enhanced-background) !important;
+  color: var(--jira-enhanced-text) !important;
+}
+
+.jira-dark-mode * {
+  border-color: var(--jira-enhanced-border) !important;
+}
+
+.jira-dark-mode [data-testid*="navigation"],
+.jira-dark-mode #navigation-app {
+  background-color: var(--jira-enhanced-background-subtle) !important;
+}
+
+/* Improved form styling */
+.jira-ux-enhanced input[type="text"],
+.jira-ux-enhanced input[type="email"],
+.jira-ux-enhanced input[type="password"],
+.jira-ux-enhanced textarea,
+.jira-ux-enhanced select {
+  border-radius: 4px !important;
+  border: 2px solid var(--jira-enhanced-border) !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.jira-ux-enhanced input:focus,
+.jira-ux-enhanced textarea:focus,
+.jira-ux-enhanced select:focus {
+  border-color: var(--jira-enhanced-primary) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2) !important;
+}
+
+/* Enhanced buttons */
+.jira-ux-enhanced button[type="submit"],
+.jira-ux-enhanced [data-testid*="button.primary"] {
+  background: linear-gradient(135deg, var(--jira-enhanced-primary), #0065ff) !important;
+  border: none !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+.jira-ux-enhanced button[type="submit"]:hover,
+.jira-ux-enhanced [data-testid*="button.primary"]:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 82, 204, 0.3) !important;
+}
+
+/* Status indicators enhancement */
+.jira-ux-enhanced [data-testid*="status.lozenge"] {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Priority icons enhancement */
+.jira-ux-enhanced [data-testid*="priority"] img,
+.jira-ux-enhanced [aria-label*="Priority"] img {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) !important;
+}
+
+/* Enhanced tooltips */
+.jira-ux-enhanced [data-tooltip] {
+  position: relative;
+}
+
+.jira-ux-enhanced [data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--jira-enhanced-text);
+  color: var(--jira-enhanced-background);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: var(--jira-enhanced-shadow);
+}
+
+/* Loading states enhancement */
+.jira-ux-enhanced [data-testid*="spinner"],
+.jira-ux-enhanced .loading {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .jira-compact-view {
+    font-size: 12px;
+  }
+  
+  .issue-enhanced::before {
+    width: 2px;
+  }
+  
+  .board-enhanced [data-testid*="software-board.board-container.board.card"] {
+    margin: 2px !important;
+    padding: 6px !important;
+  }
+}
+
+/* Focus improvements for accessibility */
+.jira-ux-enhanced *:focus {
+  outline: 2px solid var(--jira-enhanced-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Smooth scrolling */
+.jira-ux-enhanced {
+  scroll-behavior: smooth;
+}
+
+/* Animation for enhanced elements */
+.enhanced {
+  animation: enhanceIn 0.3s ease-out;
+}
+
+@keyframes enhanceIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

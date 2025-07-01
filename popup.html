@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JIRA UX Enhancer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>JIRA UX Enhancer</h1>
+      <p class="version">v1.0.0</p>
+    </header>
+
+    <main class="popup-main">
+      <section class="enhancement-toggles">
+        <h2>Enhancements</h2>
+        
+        <div class="toggle-group">
+          <label class="toggle-item">
+            <input type="checkbox" id="darkMode" class="toggle-checkbox">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Dark Mode</span>
+          </label>
+          
+          <label class="toggle-item">
+            <input type="checkbox" id="compactView" class="toggle-checkbox">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Compact View</span>
+          </label>
+          
+          <label class="toggle-item">
+            <input type="checkbox" id="enhancedNavigation" class="toggle-checkbox">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Enhanced Navigation</span>
+          </label>
+          
+          <label class="toggle-item">
+            <input type="checkbox" id="improvedReadability" class="toggle-checkbox">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Improved Readability</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+          <button id="refreshEnhancements" class="action-btn primary">
+            Refresh Enhancements
+          </button>
+          <button id="resetSettings" class="action-btn secondary">
+            Reset Settings
+          </button>
+        </div>
+      </section>
+
+      <section class="status">
+        <div class="status-indicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">Checking JIRA page...</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="popup-footer">
+      <a href="#" id="optionsLink" class="footer-link">Options</a>
+      <a href="#" id="helpLink" class="footer-link">Help</a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

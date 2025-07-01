@@ -1,0 +1,51 @@
+{
+  "name": "jira-ux-enhancer",
+  "version": "1.0.0",
+  "description": "Chrome extension that improves JIRA website user experience",
+  "main": "background.js",
+  "scripts": {
+    "build": "npm run clean && npm run copy-files",
+    "dev": "npm run build && npm run watch",
+    "watch": "chokidar \"src/**/*\" -c \"npm run build\"",
+    "clean": "rimraf dist",
+    "copy-files": "mkdir -p dist && cp -r *.js *.html *.css *.json icons dist/ 2>/dev/null || true",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix",
+    "package": "npm run build && cd dist && zip -r ../jira-ux-enhancer.zip .",
+    "test": "echo \"No tests specified yet\"",
+    "validate": "web-ext lint --source-dir=."
+  },
+  "keywords": [
+    "chrome-extension",
+    "jira",
+    "ux",
+    "productivity",
+    "atlassian"
+  ],
+  "authors": [
+    {
+      "name": "Your Name",
+      "email": "your.email@example.com"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "rimraf": "^5.0.5",
+    "web-ext": "^7.11.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/chrome-jira-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/chrome-jira-plugin/issues"
+  },
+  "homepage": "https://github.com/your-username/chrome-jira-plugin#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
