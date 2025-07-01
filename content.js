@@ -272,9 +272,8 @@ class JiraEnhancer {
     parentDiv.style.border = '1px dashed rgba(0, 82, 204, 0.3)';
     parentDiv.style.borderRadius = '4px';
     
-    // Add hover effect for debugging
+    // Add hover effect for edit button visibility
     parentDiv.addEventListener('mouseenter', () => {
-      parentDiv.style.backgroundColor = 'rgba(0, 82, 204, 0.05)';
       // Show edit button on hover
       const editBtn = parentDiv.querySelector('.jira-ux-edit-button');
       if (editBtn) {
@@ -283,7 +282,6 @@ class JiraEnhancer {
     });
     
     parentDiv.addEventListener('mouseleave', () => {
-      parentDiv.style.backgroundColor = '';
       // Hide edit button when not hovering
       const editBtn = parentDiv.querySelector('.jira-ux-edit-button');
       if (editBtn) {
