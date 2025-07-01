@@ -364,8 +364,8 @@ class JiraEnhancer {
     // Style the button
     Object.assign(editButton.style, {
       position: 'absolute',
-      top: '4px',
-      right: '4px',
+      top: '-24px',
+      right: '0px',
       padding: '4px 8px',
       fontSize: '11px',
       fontWeight: '600',
