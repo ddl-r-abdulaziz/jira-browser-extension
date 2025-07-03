@@ -58,7 +58,7 @@ class PopupController {
           action: 'updateSetting',
           setting: setting,
           value: value
-        }, (response) => {
+        }, () => {
           // Handle the case where content script doesn't exist or isn't ready
           if (chrome.runtime.lastError) {
             // Silently ignore - content script may not be injected on this page
@@ -74,7 +74,7 @@ class PopupController {
       if (tabs[0]) {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: 'refreshEnhancements'
-        }, (response) => {
+        }, () => {
           if (chrome.runtime.lastError) {
             this.showTemporaryStatus('No JIRA page detected', 'error');
             return;
@@ -99,7 +99,7 @@ class PopupController {
           chrome.tabs.sendMessage(tabs[0].id, {
             action: 'resetSettings',
             settings: defaultSettings
-          }, (response) => {
+          }, () => {
             if (chrome.runtime.lastError) {
               // Silently ignore - content script may not be injected
               return;

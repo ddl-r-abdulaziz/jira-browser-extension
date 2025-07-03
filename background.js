@@ -151,7 +151,7 @@ class BackgroundService {
     // This method can be used for dynamic injection if needed
     chrome.tabs.sendMessage(tabId, {
       action: 'initializeEnhancements'
-    }, (response) => {
+    }, () => {
       if (chrome.runtime.lastError) {
         console.log('Content script not ready yet');
       }

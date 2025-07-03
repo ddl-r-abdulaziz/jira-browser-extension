@@ -192,13 +192,13 @@ class JiraEnhancer {
     parentDiv.setAttribute('data-jira-enhanced-editable', 'true');
 
     // Capture original event handlers before blocking
-    const originalHandlers = this.captureOriginalHandlers(parentDiv, editableFieldElement);
+    this.captureOriginalHandlers();
 
     // Block the default onclick behavior
     this.blockEditableFieldClick(parentDiv);
 
     // Add edit button with original functionality
-    this.addEditButton(editableFieldElement, originalHandlers);
+    this.addEditButton(editableFieldElement);
 
     // Add visual indicators
     this.addEditableFieldIndicators(parentDiv);
@@ -303,7 +303,7 @@ class JiraEnhancer {
     });
   }
 
-  captureOriginalHandlers(parentDiv, editableFieldElement) {
+  captureOriginalHandlers() {
     // Simplified - we no longer need complex handler capture since we use event simulation
     return {};
   }
@@ -365,7 +365,7 @@ class JiraEnhancer {
     });
   }
 
-  addEditButton(editableFieldElement, originalHandlers) {
+  addEditButton(editableFieldElement) {
     // Create edit button
     const editButton = document.createElement('button');
     editButton.className = 'jira-ux-edit-button';
