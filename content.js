@@ -225,6 +225,11 @@ class JiraEnhancer {
         return;
       }
       
+      // Allow links and other clickable elements to work
+      if (event.target.closest('a, button:not([contenteditable]), [role="button"]:not([contenteditable]), input, select, textarea')) {
+        return; // Let the event through
+      }
+      
       // Prevent the default inline editing behavior
       event.preventDefault();
       event.stopPropagation();
@@ -250,6 +255,11 @@ class JiraEnhancer {
         // Skip if event originated from our edit button
         if (event.target.closest('.jira-ux-edit-button')) {
           return;
+        }
+        
+        // Allow links and other clickable elements to work
+        if (event.target.closest('a, button:not([contenteditable]), [role="button"]:not([contenteditable]), input, select, textarea')) {
+          return; // Let the event through
         }
         
         if (event.target.closest('[data-component-selector="jira-issue-view-rich-text-inline-edit-view-container"]')) {
