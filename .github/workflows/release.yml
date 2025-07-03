@@ -1,0 +1,94 @@
+name: Release Extensions
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Lint code
+      run: npm run lint
+      
+    - name: Build and package Chrome extension
+      run: npm run package:chrome
+      
+    - name: Build and package Firefox extension
+      run: npm run package:firefox
+      
+    - name: Extract version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        body: |
+          ## JIRA Browser Extension v${{ steps.version.outputs.VERSION }}
+          
+          Cross-browser extension that improves JIRA website user experience.
+          
+          ### Downloads
+          - **Chrome Extension**: Download `jira-browser-extension-chrome.zip`
+          - **Firefox Extension**: Download `jira-browser-extension-firefox.zip`
+          
+          ### Installation
+          
+          #### Chrome
+          1. Download the Chrome extension zip file
+          2. Extract the zip file
+          3. Open Chrome and go to `chrome://extensions/`
+          4. Enable "Developer mode"
+          5. Click "Load unpacked" and select the extracted folder
+          
+          #### Firefox
+          1. Download the Firefox extension zip file
+          2. Extract the zip file
+          3. Open Firefox and go to `about:debugging`
+          4. Click "This Firefox"
+          5. Click "Load Temporary Add-on" and select the manifest.json from the extracted folder
+          
+          ### Changes
+          See the commit history for detailed changes in this release.
+          
+    - name: Upload Chrome Extension
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./jira-browser-extension-chrome.zip
+        asset_name: jira-browser-extension-chrome.zip
+        asset_content_type: application/zip
+        
+    - name: Upload Firefox Extension
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./jira-browser-extension-firefox.zip
+        asset_name: jira-browser-extension-firefox.zip
+        asset_content_type: application/zip
